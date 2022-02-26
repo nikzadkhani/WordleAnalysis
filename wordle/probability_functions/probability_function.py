@@ -16,7 +16,7 @@ from typing import List
 class ProbabilityFunction(ABC):
     """ base class of probability function """
 
-    def __init__(self):
+    def __init__(self, word_bank):
         self.VOWELS = "aeiou"
         self.CONSONANTS = "bcdfghjklmnpqrstvwxyz"
         self.ALPHABET = "abcdefghijklmnopqrstuvwxyz"
@@ -31,21 +31,15 @@ class ProbabilityFunction(ABC):
         :param word: the word we should calculate the probability of
         :return: the probability we choose this word
         """
-        raise NotImplementedError(
-            f"Class {self.__class__.__name__,} needs function \
-                calc_prob to be implemented")
+        pass
 
     @abstractmethod
     def calc_prob_of_vowels(self, word: str) -> float:
-        raise NotImplementedError(
-            f"Class {self.__class__.__name__,} needs function \
-                calc_prob_of_vowels to be implemented")
+        pass
 
     @abstractmethod
     def calc_prob_of_consonants(self, word: str) -> float:
-        raise NotImplementedError(
-            f"Class {self.__class__.__name__,} needs function \
-                calc_prob_of_consonants to be implemented")
+        pass
 
     ###
     # BATCH METHODS
