@@ -5,7 +5,6 @@
 #
 # TODO: add tests
 
-
 from setuptools import find_packages, setup
 
 setup(
