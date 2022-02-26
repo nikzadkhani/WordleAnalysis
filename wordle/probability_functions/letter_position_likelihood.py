@@ -1,15 +1,17 @@
-#
-# letter_position_likelihood.py
-#
-# TODO:
-#   - Finish remove impossible words
+"""
+letter_position_likelihood.py
+"""
 
-from ..constants import VOWELS, CONSONANTS, ALPHABET, LetterState
-from typing import Dict, List, Tuple
-from probability_function import ProbabilityFunction
+from typing import Dict, List
+
+from wordle.constants import ALPHABET, CONSONANTS, VOWELS
+from .probability_function import ProbabilityFunction
 
 
 class LetterPositionLikelihood(ProbabilityFunction):
+    """Calculates probability of a word based on the likelihood that the letter could
+    appear in its given position in the word"""
+
     def __init__(self, word_bank: List[str]):
         super().__init__(word_bank)
         self.mapping = self.generate_mapping()
@@ -63,8 +65,3 @@ class LetterPositionLikelihood(ProbabilityFunction):
             for pos, letter in enumerate(word)
             if letter in CONSONANTS
         )
-
-    def remove_impossible_words(self, incorrect_letters: List[Tuple[str, LetterState]]) -> None:
-        """Given a list of incorrect letters, remove all words that contain those letters."""
-        for word in self.word_bank:
-            for 

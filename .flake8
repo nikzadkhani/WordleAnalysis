@@ -1,0 +1,4 @@
+[flake8]
+# same as black
+max-line-length = 88
+ignore = W503, E203, E741, E402, E731, E722, E129, Q000, F541

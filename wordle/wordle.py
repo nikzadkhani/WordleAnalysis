@@ -9,86 +9,59 @@
 #  - write the wordle game
 
 import random
+import logging
 
-from typing import Dict, List
+
+from wordle.probability_functions.probability_function import ProbabilityFunction
+from wordle.strategies.strategy import Strategy
 
 
 class Wordle:
-    def __init__(self, word_bank, strategy="ML", use_per_pos_probs=True, max_tries=6):
-        self.original_bank = word_bank
+    """main game loop"""
+
+    def __init__(
+        self,
+        prob_func: ProbabilityFunction,
+        strategy: Strategy,
+        max_tries=6,
+    ):
+        self.prob_func = prob_func
+        self.strategy = strategy
         self.max_tries = max_tries
-        self.word_bank = word_bank
-        self.game_finished = False
-        self.word_goal = self.generate_random_word(word_bank)
-        self.strategy = strategy.upper()
-        self.use_per_pos_probs = use_per_pos_probs
-        assert (
-            strategy == "ML" or strategy == "LL" or strategy == "ALT",
-            "BASTARD, yaint a strategy",
+
+        logging.debug(
+            "Wordle initialized with \n"
+            "Probability Function: %s\n"
+            "Strategy: %s\n"
+            "Max tries: %d",
+            prob_func,
+            strategy,
+            max_tries,
         )
 
-    def generate_random_word(word_array):
-        random_word = word_array[random.randint(0, len(word_array))]
-        return random_word
+        self.game_finished = False
 
-    def find_most_likely_word(probability_fcn, probability_dict, word_array) -> str:
-        # TODO: interface the parameters or curry whichever is more big brain
-        highest_prob = 0
-        most_likely_word = ""
-        for word in word_array:
-            if (probability := probability_fcn(word, probability_dict)) > highest_prob:
-                most_likely_word = word
-                highest_prob = probability
-        return most_likely_word
+        self.goal_word = random.choice(self.prob_func.word_bank)
+        logging.debug("Goal word: %s", self.goal_word)
 
-    def find_least_likely_word(probability_fcn, probability_dict, word_array) -> str:
-        # TODO: interface the parameters or curry whichever is more big brain
-        lowest_prob = 0
-        least_likely_word = ""
-        for word in word_array:
-            if (probability := probability_fcn(word, probability_dict)) < lowest_prob:
-                least_likely_word = word
-                lowest_prob = probability
-        return least_likely_word
+        self.tries = 0
 
     def play(self):
-        # TODO: be epic with 3.10
-        guesses = 0
-        while not self.game_finished and guesses < self.max_tries:
-            letter_prob = self.calc_letter_prob(self.word_bank)
-            letter_prob_by_pos = self.calc_letter_prob_per_pos(self.word_bank)
+        """Run the game loop"""
+        guesses = []
+        while not self.game_finished:
+            self.tries += 1
+            if self.tries > self.max_tries:
+                logging.info(
+                    "Game over, failed to get goal word: %s", self.goal_word.upper()
+                )
+                logging.info("Guesses: %s", guesses)
+                break
 
-            if self.strategy == "ML":
-                pass
-            elif self.strategy == "LL":
-                pass
-            elif self.strategy == "ALT":
-                pass
-            else:
-                raise ValueError("How you did this maaan??")
+            guess = self.strategy.choose_next_word(self.prob_func)
+            guesses.append(guess.upper())
+            logging.info("Guess %d: %s", self.tries, guess)
 
-            guesses += 1
-
-
-def main():
-    file = WORD_FILE_TEMPLATE.format("5")
-    sift_words(5, WORD_FILE)
-    sift_repetitions(file)
-    word_array = load_words(f"unique_{file}")
-    letter_prob = calc_letter_prob(word_array)
-    letter_prob_by_pos = calc_letter_prob_per_pos(word_array)
-
-    print(find_most_likely_word(calc_word_prob, letter_prob, word_array))
-    print(
-        find_most_likely_word(calc_word_prob_with_pos, letter_prob_by_pos, word_array)
-    )
-    print(find_most_likely_word(calc_word_prob_consonant, letter_prob, word_array))
-    print(
-        find_most_likely_word(
-            calc_word_prob_consonant_with_pos, letter_prob_by_pos, word_array
-        )
-    )
-
-
-if __name__ == "__main__":
-    main()
+            if guess == self.goal_word:
+                logging.info("Got the goal word after %d tries", self.tries)
+                self.game_finished = True

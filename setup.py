@@ -3,9 +3,10 @@
 #
 # creates wordle package
 #
-# TODO: add tests
 
 from setuptools import find_packages, setup
+
+TEST_REQUIREMENTS = ["pytest~=7.0.1", "black~=22.1.0", "flake8~=4.0.1"]
 
 setup(
     name="wordle",
@@ -13,4 +14,5 @@ setup(
     author="Nikzad Khani, Rishab Nayak",
     author_email="khaninikzad@gmail.com",
     packages=find_packages(),
+    extras_require={"test": TEST_REQUIREMENTS},
 )

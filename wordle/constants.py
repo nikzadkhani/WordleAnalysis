@@ -12,6 +12,6 @@ ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
 
 class LetterState(Enum):
-    GREY = False
-    YELLOW = True
-    GREEN = True
+    GREY = 0
+    YELLOW = 1
+    GREEN = 2

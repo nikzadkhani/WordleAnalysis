@@ -1,15 +1,11 @@
-#
-# letter_likelihood_sum.py
-
-# TODO:
-#   - Add remove impossible words, think if this should be added to prob function
-#
+"""
+letter_likelhiood_sum.py
+"""
+from typing import List, Dict
+import numpy as np
 
 from ..constants import VOWELS, CONSONANTS, ALPHABET
-from probability_function import ProbabilityFunction
-from typing import List, Dict
-
-import numpy as np
+from .probability_function import ProbabilityFunction
 
 
 class LetterSetLikelihood(ProbabilityFunction):
@@ -23,7 +19,7 @@ class LetterSetLikelihood(ProbabilityFunction):
 
     def __init__(self, word_bank: List[str]):
         super().__init__(word_bank)
-        self.mapping = self.generate_mapping(word_bank)
+        self.mapping = self.generate_mapping()
 
     def generate_mapping(self) -> Dict[str, float]:
         """Calculates the probability of a letter appearing in the letter set based
