@@ -14,6 +14,7 @@ import logging
 
 from wordle.probability_functions.probability_function import ProbabilityFunction
 from wordle.strategies.strategy import Strategy
+from wordle.words.word_bank import WordBank
 
 
 class Wordle:
@@ -23,10 +24,12 @@ class Wordle:
         self,
         prob_func: ProbabilityFunction,
         strategy: Strategy,
-        max_tries=6,
+        word_bank_file_path: str,
+        max_tries: int,
     ):
         self.prob_func = prob_func
         self.strategy = strategy
+        self.word_bank = WordBank(word_bank_file_path)
         self.max_tries = max_tries
 
         logging.debug(
@@ -41,7 +44,7 @@ class Wordle:
 
         self.game_finished = False
 
-        self.goal_word = random.choice(self.prob_func.word_bank)
+        self.goal_word = random.choice(self.word_bank)
         logging.debug("Goal word: %s", self.goal_word)
 
         self.tries = 0

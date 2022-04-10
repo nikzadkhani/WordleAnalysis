@@ -3,7 +3,8 @@ strategy.py
 """
 from abc import ABC, abstractmethod
 
-from wordle.probability_functions.probability_function import ProbabilityFunction
+from ..probability_functions.probability_function import ProbabilityFunction
+from ..words.word_bank import WordBank
 
 
 class Strategy(ABC):
@@ -11,7 +12,7 @@ class Strategy(ABC):
 
     @staticmethod
     @abstractmethod
-    def choose_next_word(prob_func: ProbabilityFunction) -> str:
+    def choose_next_word(word_bank: WordBank, prob_func: ProbabilityFunction) -> str:
         """
         Given a probability function choose the next word to use
         :param prob_func: the probability function to use

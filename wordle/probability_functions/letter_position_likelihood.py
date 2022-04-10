@@ -2,9 +2,10 @@
 letter_position_likelihood.py
 """
 
-from typing import Dict, List
+from typing import Dict
 
-from wordle.constants import ALPHABET, CONSONANTS, VOWELS
+from ..constants import ALPHABET, CONSONANTS, VOWELS
+from ..words.word_bank import WordBank
 from .probability_function import ProbabilityFunction
 
 
@@ -12,18 +13,15 @@ class LetterPositionLikelihood(ProbabilityFunction):
     """Calculates probability of a word based on the likelihood that the letter could
     appear in its given position in the word"""
 
-    def __init__(self, word_bank: List[str]):
-        super().__init__(word_bank)
-        self.mapping = self.generate_mapping()
-
-    def generate_mapping(self) -> Dict[int, Dict[str, float]]:
+    @staticmethod
+    def generate_mapping(word_bank: WordBank) -> Dict[int, Dict[str, float]]:
         """
         Generates a mapping of letter position to letter probability. The map
         is first indexed by position, then by letter.
         :return: A mapping of position and letter to its probability.
         """
         pos_to_letter_to_prob = {}
-        for word in self.word_bank:
+        for word in word_bank:
             for pos, letter in enumerate(word):
                 if pos not in pos_to_letter_to_prob:
                     pos_to_letter_to_prob[pos] = {letter: 0}
@@ -49,19 +47,23 @@ class LetterPositionLikelihood(ProbabilityFunction):
 
         return pos_to_letter_to_prob
 
-    def calc_prob(self, word: str) -> float:
-        return sum(self.mapping[pos][letter] for pos, letter in enumerate(word))
+    @staticmethod
+    def calc_prob(word_bank: WordBank, word: str) -> float:
+        mapping = LetterPositionLikelihood.generate_mapping(word_bank)
+        return sum(mapping[pos][letter] for pos, letter in enumerate(word))
 
-    def calc_prob_of_vowels(self, word: str) -> float:
+    @staticmethod
+    def calc_prob_of_vowels(word_bank: WordBank, word: str) -> float:
+        mapping = LetterPositionLikelihood.generate_mapping(word_bank)
         return sum(
-            self.mapping[pos][letter]
-            for pos, letter in enumerate(word)
-            if letter in VOWELS
+            mapping[pos][letter] for pos, letter in enumerate(word) if letter in VOWELS
         )
 
-    def calc_prob_of_consonants(self, word: str) -> float:
+    @staticmethod
+    def calc_prob_of_consonants(word_bank: WordBank, word: str) -> float:
+        mapping = LetterPositionLikelihood.generate_mapping(word_bank)
         return sum(
-            self.mapping[pos][letter]
+            mapping[pos][letter]
             for pos, letter in enumerate(word)
             if letter in CONSONANTS
         )
