@@ -51,8 +51,7 @@ class Wordle:
         self.guesses = []
         self.guess_states = []
 
-        # self.goal_word = random.choice(self.word_bank)
-        self.goal_word = "pores"
+        self.goal_word = random.choice(self.word_bank)
         logging.debug("Goal word: %s", self.goal_word)
 
         self.tries = 0
@@ -114,10 +113,12 @@ class Wordle:
                 self.guesses.append(guess.upper())
 
                 logging.info("Guess %d: %s", self.tries, guess)
-                self.print_state()
 
                 guess_state = self.get_guess_state(guess)
                 self.guess_states.append(guess_state)
+
+                # Print the guesses wordle style
+                self.print_state()
 
                 if self.filter_bank:
                     self.word_bank.filter_bank(guess_state)
