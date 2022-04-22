@@ -1,9 +1,7 @@
-# import wordle.probability_functions.letter_position_likelihood
-# import wordle.probability_functions as pf
+from wordle.words.word_bank import WordBank
+from wordle.constants import LetterState
 
-# print(dir(wordle.probability_functions.letter_position_likelihood))
-# print(dir(pf))
+# fdo
+x = [("f", LetterState.GREEN), ("o", LetterState.YELLOW), ("o", LetterState.GREY)]
 
-from wordle.helpers import find_available_word_banks
-
-print(find_available_word_banks())
+print(WordBank.is_possible_word("fdo", x))

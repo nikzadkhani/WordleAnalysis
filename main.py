@@ -3,19 +3,16 @@
 #
 # entrypoint to execute stuff in wordle package
 #
+
 from typing import Dict
-import pathlib
 import logging
 import argparse
-from unicodedata import name
-import wordle
-from wordle.helpers import (
-    find_available_word_banks,
-    find_available_probability_functions,
-    find_available_strategies,
-)
-from wordle.strategies.strategy import Strategy
-from wordle.probability_functions.probability_function import ProbabilityFunction
+
+from wordle.helpers import find_available_word_banks
+
+import wordle.strategies as strats
+import wordle.probability_functions as p_fcns
+
 from wordle.wordle import Wordle
 
 
@@ -30,24 +27,19 @@ def main():
     parser.add_argument("num_letters", type=int, help="How long the words should be")
     parser.add_argument("num_guesses", type=int, help="How many guesses the user has")
 
-    # Checks functions in strategies module that are not built-ins
-    strats: Dict[str, Strategy] = find_available_strategies()
     parser.add_argument(
         "-s",
         "--strategy",
         type=str,
         help="Strategy to use",
-        choices=strats,
         default="MaxLikelihoodStrategy",
     )
 
-    prob_fcns: Dict[str, ProbabilityFunction] = find_available_probability_functions()
     parser.add_argument(
         "-p",
         "--probability_function",
         type=str,
         help="Probability function to use",
-        choices=prob_fcns,
         default="LetterPositionLikelihood",
     )
 
@@ -58,6 +50,7 @@ def main():
         type=str,
         help="File to read the word bank from",
         choices=banks.keys(),
+        default="wordle/wordle_bank",
     )
 
     parser.add_argument(
@@ -73,10 +66,28 @@ def main():
     else:
         logging.basicConfig(level=logging.INFO)
 
+    available_strategies = [
+        strat for strat in dir(strats) if not strat.startswith("__")
+    ]
+    if args.strategy not in available_strategies:
+        raise ImportError(
+            f"{args.strategy} is not an available strategy.\n"
+            "Please check stratgies.py for available stragies.\n"
+        )
+    strat = getattr(strats, args.strategy)
+
+    available_prob_fcns = [fcn for fcn in dir(p_fcns) if not fcn.startswith("__")]
+    if args.probability_function not in available_prob_fcns:
+        raise ImportError(
+            f"{args.probability_function} is not an available strategy.\n"
+            "Please check stratgies.py for available stragies.\n"
+        )
+    p_fcn = getattr(p_fcns, args.probability_function)
+
     if args.action == "play":
         game = Wordle(
-            prob_fcns[args.probability_function],
-            strats[args.strategy],
+            p_fcn,
+            strat,
             banks[args.word_bank],
             args.num_guesses,
         )
@@ -84,8 +95,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
-    print(find_available_probability_functions())
-    # import importlib
-    # for module in
-    # importlib.import_module()
+    main()
